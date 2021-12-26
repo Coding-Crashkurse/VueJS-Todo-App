@@ -23,10 +23,10 @@ export default {
   },
   methods: {
     toggleTodo() {
-      this.todo.done = !this.todo.done;
+      this.$emit("toggledone-index", this.todoindex);
     },
     removeTodo() {
-      this.$emit("child-index", this.todoindex);
+      this.$emit("remove-index", this.todoindex);
     },
   },
 };

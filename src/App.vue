@@ -22,7 +22,12 @@
       </div>
     </div>
     <div v-for="(todo, index) in todos" :key="todo.todo">
-      <Todo :todoprop="todo" :todoindex="index" @child-index="removeTodo" />
+      <Todo
+        :todoprop="todo"
+        :todoindex="index"
+        @remove-index="removeTodo"
+        @toggledone-index="setDone"
+      />
     </div>
   </div>
 </template>
@@ -38,26 +43,42 @@ export default {
   data() {
     return {
       newTodo: "",
-      todos: [
-        { todo: "Einkaufen", done: false },
-        { todo: "Sport", done: false },
-        { todo: "Programmieren", done: true },
-      ],
+      todos: [],
     };
   },
+  mounted() {
+    let data = localStorage.getItem("todos");
+    console.log(data);
+    if (data !== "" && data !== null) {
+      this.todos = JSON.parse(data);
+    } else {
+      this.todos = [];
+    }
+  },
   methods: {
+    storeTodos() {
+      localStorage.setItem("todos", JSON.stringify(this.todos));
+    },
     addTodo() {
       if (this.newTodo.trim() === "") {
         return;
       }
       this.todos.push({ todo: this.newTodo, done: false });
+      this.storeTodos();
+      this.newTodo = "";
+    },
+    setDone(index) {
+      this.todos[index].done = !this.todos[index].done;
+      this.storeTodos();
     },
     removeTodo(index) {
       this.todos.splice(index, 1);
+      this.storeTodos();
     },
   },
   computed: {
     openTodos() {
+      console.log(this.todos);
       const openTodos = this.todos.filter((todo) => {
         return !todo.done;
       });
